@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { 
   Users, 
   Calendar, 
@@ -15,13 +16,21 @@ import {
   Settings,
   LogOut,
   UserCheck,
-  Activity
+  Activity,
+  BarChart3,
+  Map
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import BarangayHeatmap from "@/components/admin/BarangayHeatmap";
+import BarangayStatistics from "@/components/admin/BarangayStatistics";
+import ProviderSelector from "@/components/admin/ProviderSelector";
+import PublicHealthStats from "@/components/admin/PublicHealthStats";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [selectedProvider, setSelectedProvider] = useState('cho');
+  const [selectedView, setSelectedView] = useState('overview');
 
   // Mock data - in real app this would come from Supabase
   const stats = {
@@ -92,6 +101,24 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            <div className="flex border border-border rounded-lg p-1">
+              <Button 
+                variant={selectedView === 'overview' ? 'default' : 'ghost'} 
+                size="sm"
+                onClick={() => setSelectedView('overview')}
+              >
+                <BarChart3 className="w-4 h-4 mr-1" />
+                Overview
+              </Button>
+              <Button 
+                variant={selectedView === 'map' ? 'default' : 'ghost'} 
+                size="sm"
+                onClick={() => setSelectedView('map')}
+              >
+                <Map className="w-4 h-4 mr-1" />
+                Map View
+              </Button>
+            </div>
             <Button variant="ghost" size="sm">
               <Bell className="w-4 h-4" />
               <Badge className="ml-2 bg-destructive text-destructive-foreground text-xs">3</Badge>
@@ -107,6 +134,14 @@ const AdminDashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto p-6">
+        {/* Provider Selection */}
+        <div className="mb-6">
+          <ProviderSelector 
+            selectedProvider={selectedProvider}
+            onProviderChange={setSelectedProvider}
+          />
+        </div>
+
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card className="medical-card">
@@ -181,6 +216,27 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Content based on selected view */}
+        {selectedView === 'overview' && (
+          <>
+            {/* Public Health Statistics */}
+            <div className="mb-8">
+              <PublicHealthStats />
+            </div>
+
+            {/* Barangay Statistics */}
+            <div className="mb-8">
+              <BarangayStatistics />
+            </div>
+          </>
+        )}
+
+        {selectedView === 'map' && (
+          <div className="mb-8">
+            <BarangayHeatmap />
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Pending Appointment Requests */}
