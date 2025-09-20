@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Heart, Shield, Users, Calendar } from "lucide-react";
+import { AnonymousBooking } from "@/components/AnonymousBooking";
+import { PublicStats } from "@/components/PublicStats";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -91,6 +93,47 @@ const Landing = () => {
               </CardContent>
             </Card>
           </div>
+        </div>
+      </section>
+
+      {/* Anonymous Booking Section */}
+      <section className="px-6 py-16 bg-card/30">
+        <div className="max-w-4xl mx-auto">
+          <h3 className="text-3xl font-bold text-center text-foreground mb-12">
+            Book an Appointment
+          </h3>
+          <div className="grid lg:grid-cols-2 gap-8">
+            <AnonymousBooking />
+            <Card className="medical-card">
+              <CardContent className="p-8">
+                <h4 className="text-xl font-semibold text-foreground mb-4">Anonymous & Confidential</h4>
+                <div className="space-y-4 text-muted-foreground">
+                  <p>Your privacy is our priority. Book appointments using a codename for complete confidentiality.</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      <span className="text-sm">Flexible scheduling options</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-primary" />
+                      <span className="text-sm">Complete confidentiality</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-primary" />
+                      <span className="text-sm">Professional care</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Public Statistics Section */}
+      <section className="px-6 py-16">
+        <div className="max-w-6xl mx-auto">
+          <PublicStats />
         </div>
       </section>
 

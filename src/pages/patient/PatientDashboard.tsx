@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { 
   Calendar, 
@@ -12,36 +14,60 @@ import {
   AlertCircle,
   Bell,
   User,
-  LogOut
+  LogOut,
+  Activity,
+  TrendingUp,
+  MessageCircle,
+  BookOpen
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PatientAnnouncements } from "@/components/patient/PatientAnnouncements";
+import { HIVInformation } from "@/components/patient/HIVInformation";
+import { CommunityChat } from "@/components/patient/CommunityChat";
+import ProfileEditor from "@/components/admin/ProfileEditor";
 
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   // Mock data - in real app this would come from Supabase
   const upcomingAppointments = [
     {
       id: 1,
-      date: "2024-01-15",
+      type: "Regular Check-up",
+      date: "Jan 15, 2024",
       time: "10:00 AM",
-      type: "Routine Check-up",
       status: "confirmed"
     },
     {
       id: 2,
-      date: "2024-01-22",
-      time: "2:30 PM", 
-      type: "Lab Results Review",
+      type: "Lab Work",
+      date: "Jan 22, 2024", 
+      time: "9:00 AM",
       status: "pending"
     }
   ];
 
   const recentActivity = [
-    { id: 1, activity: "Lab results uploaded", date: "2024-01-10", type: "success" },
-    { id: 2, activity: "Appointment confirmed", date: "2024-01-08", type: "info" },
-    { id: 3, activity: "Medication reminder sent", date: "2024-01-05", type: "warning" }
+    {
+      id: 1,
+      activity: "Lab results received",
+      date: "2 days ago",
+      type: "success"
+    },
+    {
+      id: 2,
+      activity: "Appointment scheduled",
+      date: "5 days ago", 
+      type: "info"
+    },
+    {
+      id: 3,
+      activity: "Medication reminder",
+      date: "1 week ago",
+      type: "warning"
+    }
   ];
 
   const handleLogout = () => {
@@ -70,9 +96,6 @@ const PatientDashboard = () => {
             <Button variant="ghost" size="sm">
               <Bell className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm">
-              <User className="w-4 h-4" />
-            </Button>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="w-4 h-4" />
             </Button>
@@ -81,175 +104,159 @@ const PatientDashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto p-6">
-        {/* Quick Stats */}
-        <div className="dashboard-grid mb-8">
-          <Card className="medical-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Next Appointment</p>
-                  <p className="text-2xl font-bold text-foreground">Jan 15</p>
-                  <p className="text-sm text-primary">10:00 AM</p>
-                </div>
-                <Calendar className="w-8 h-8 text-primary" />
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="announcements" className="flex items-center gap-2">
+              <Bell className="w-4 h-4" />
+              Announcements
+            </TabsTrigger>
+            <TabsTrigger value="hiv-info" className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4" />
+              HIV Information
+            </TabsTrigger>
+            <TabsTrigger value="community" className="flex items-center gap-2">
+              <MessageCircle className="w-4 h-4" />
+              Community
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              Profile
+            </TabsTrigger>
+          </TabsList>
 
-          <Card className="medical-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Treatment Days</p>
-                  <p className="text-2xl font-bold text-foreground">45</p>
-                  <p className="text-sm text-success">On track</p>
-                </div>
-                <Heart className="w-8 h-8 text-success" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="medical-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Compliance</p>
-                  <p className="text-2xl font-bold text-foreground">98%</p>
-                  <p className="text-sm text-success">Excellent</p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-success" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Upcoming Appointments */}
-          <Card className="medical-card">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Calendar className="w-5 h-5 text-primary" />
-                <span>Upcoming Appointments</span>
-              </CardTitle>
-              <CardDescription>
-                Your scheduled healthcare visits
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {upcomingAppointments.map((appointment) => (
-                  <div key={appointment.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+          <TabsContent value="dashboard" className="space-y-8">
+            {/* Quick Stats */}
+            <div className="dashboard-grid">
+              <Card className="medical-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-foreground">{appointment.type}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {appointment.date} at {appointment.time}
-                      </p>
+                      <p className="text-sm text-muted-foreground">Next Appointment</p>
+                      <p className="text-2xl font-bold text-foreground">Jan 15</p>
+                      <p className="text-sm text-primary">10:00 AM</p>
                     </div>
-                    <Badge 
-                      variant={appointment.status === 'confirmed' ? 'default' : 'secondary'}
-                      className={appointment.status === 'confirmed' ? 'status-success' : 'status-pending'}
-                    >
-                      {appointment.status}
-                    </Badge>
+                    <Calendar className="w-8 h-8 text-primary" />
                   </div>
-                ))}
-                <Button className="w-full" variant="outline" onClick={() => navigate('/patient/appointments')}>
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Schedule New Appointment
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
 
-          {/* Health Overview */}
-          <Card className="medical-card">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Heart className="w-5 h-5 text-primary" />
-                <span>Health Overview</span>
-              </CardTitle>
-              <CardDescription>
-                Your current health status and progress
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="p-4 bg-success/10 rounded-lg border border-success/20">
-                  <div className="flex items-center space-x-3">
-                    <CheckCircle className="w-5 h-5 text-success" />
+              <Card className="medical-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-success">Treatment On Track</p>
-                      <p className="text-sm text-muted-foreground">Last updated: Jan 10, 2024</p>
+                      <p className="text-sm text-muted-foreground">Treatment Days</p>
+                      <p className="text-2xl font-bold text-foreground">45</p>
+                      <p className="text-sm text-accent">On track</p>
+                    </div>
+                    <Heart className="w-8 h-8 text-accent" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="medical-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Compliance</p>
+                      <p className="text-2xl font-bold text-foreground">98%</p>
+                      <p className="text-sm text-accent">Excellent</p>
+                    </div>
+                    <CheckCircle className="w-8 h-8 text-accent" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Card className="medical-card">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Calendar className="w-5 h-5 text-primary" />
+                    <span>Upcoming Appointments</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {upcomingAppointments.map((appointment) => (
+                      <div key={appointment.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                        <div>
+                          <p className="font-medium text-foreground">{appointment.type}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {appointment.date} at {appointment.time}
+                          </p>
+                        </div>
+                        <Badge variant={appointment.status === 'confirmed' ? 'default' : 'secondary'}>
+                          {appointment.status}
+                        </Badge>
+                      </div>
+                    ))}
+                    <Button className="w-full" variant="outline" onClick={() => navigate('/patient/appointments')}>
+                      <Calendar className="w-4 h-4 mr-2" />
+                      Schedule New Appointment
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="medical-card">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Heart className="w-5 h-5 text-primary" />
+                    <span>Health Overview</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-accent/10 rounded-lg border border-accent/20">
+                      <div className="flex items-center space-x-3">
+                        <CheckCircle className="w-5 h-5 text-accent" />
+                        <div>
+                          <p className="font-medium text-accent">Treatment On Track</p>
+                          <p className="text-sm text-muted-foreground">Last updated: Jan 10, 2024</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Medication Adherence</span>
+                        <span className="text-sm font-medium text-accent">98%</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Last Lab Test</span>
+                        <span className="text-sm font-medium text-foreground">Jan 3, 2024</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-muted-foreground">Next Check-up</span>
+                        <span className="text-sm font-medium text-primary">Jan 15, 2024</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Medication Adherence</span>
-                    <span className="text-sm font-medium text-success">98%</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Last Lab Test</span>
-                    <span className="text-sm font-medium text-foreground">Jan 3, 2024</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Next Check-up</span>
-                    <span className="text-sm font-medium text-primary">Jan 15, 2024</span>
-                  </div>
-                </div>
-
-                <Button className="w-full" variant="outline" onClick={() => navigate('/patient/health')}>
-                  <FileText className="w-4 h-4 mr-2" />
-                  View Full Health Record
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <Card className="medical-card mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-primary" />
-              <span>Recent Activity</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentActivity.map((item) => (
-                <div key={item.id} className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                  {item.type === 'success' && <CheckCircle className="w-4 h-4 text-success" />}
-                  {item.type === 'info' && <Clock className="w-4 h-4 text-primary" />}
-                  {item.type === 'warning' && <AlertCircle className="w-4 h-4 text-warning" />}
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{item.activity}</p>
-                    <p className="text-xs text-muted-foreground">{item.date}</p>
-                  </div>
-                </div>
-              ))}
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+          </TabsContent>
 
-        {/* Emergency Contact */}
-        <Card className="medical-card mt-6 bg-destructive/5 border-destructive/20">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-destructive/10 rounded-xl flex items-center justify-center">
-                <Phone className="w-6 h-6 text-destructive" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground">Emergency Contact</h3>
-                <p className="text-sm text-muted-foreground">
-                  For urgent medical concerns, call our 24/7 hotline
-                </p>
-                <p className="text-lg font-bold text-destructive">0915-123-4567</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          <TabsContent value="announcements">
+            <PatientAnnouncements />
+          </TabsContent>
+
+          <TabsContent value="hiv-info">
+            <HIVInformation />
+          </TabsContent>
+
+          <TabsContent value="community">
+            <CommunityChat />
+          </TabsContent>
+
+          <TabsContent value="profile">
+            <ProfileEditor userType="patient" />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
