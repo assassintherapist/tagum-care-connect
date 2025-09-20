@@ -30,11 +30,13 @@ const providers = [
 interface ProviderSelectorProps {
   selectedProvider: string;
   onProviderChange: (providerId: string) => void;
+  onProviderSelect?: (providerId: string) => void;
 }
 
 const ProviderSelector: React.FC<ProviderSelectorProps> = ({ 
   selectedProvider, 
-  onProviderChange 
+  onProviderChange,
+  onProviderSelect
 }) => {
   return (
     <Card className="medical-card">
@@ -54,7 +56,10 @@ const ProviderSelector: React.FC<ProviderSelectorProps> = ({
                   ? 'border-primary bg-primary/5'
                   : 'border-border hover:border-primary/50'
               }`}
-              onClick={() => onProviderChange(provider.id)}
+              onClick={() => {
+                onProviderChange(provider.id);
+                onProviderSelect?.(provider.id);
+              }}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-3">

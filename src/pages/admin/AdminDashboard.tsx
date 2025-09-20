@@ -18,19 +18,25 @@ import {
   UserCheck,
   Activity,
   BarChart3,
-  Map
+  Map,
+  User
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BarangayHeatmap from "@/components/admin/BarangayHeatmap";
 import BarangayStatistics from "@/components/admin/BarangayStatistics";
 import ProviderSelector from "@/components/admin/ProviderSelector";
 import PublicHealthStats from "@/components/admin/PublicHealthStats";
+import ProviderDetailView from "@/components/admin/ProviderDetailView";
+import AnnouncementManager from "@/components/admin/AnnouncementManager";
+import ProfileEditor from "@/components/admin/ProfileEditor";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedProvider, setSelectedProvider] = useState('cho');
   const [selectedView, setSelectedView] = useState('overview');
+  const [showProviderDetail, setShowProviderDetail] = useState(false);
+  const [selectedTab, setSelectedTab] = useState('dashboard');
 
   // Mock data - in real app this would come from Supabase
   const stats = {
@@ -86,6 +92,47 @@ const AdminDashboard = () => {
     navigate('/');
   };
 
+  const providers = [
+    {
+      id: 'cho',
+      name: 'City Health Office',
+      shortName: 'CHO',
+      description: 'Tagum City Health Office - Primary HIV Care Center',
+      patients: 186,
+      activeStaff: 12,
+      monthlyVisits: 234,
+      color: 'bg-primary',
+      address: 'Magugpo Poblacion, Tagum City',
+      phone: '+63 84 216 3456',
+      email: 'cho@tagumcity.gov.ph',
+      operatingHours: '8:00 AM - 5:00 PM (Mon-Fri)',
+      testsPerformed: 342,
+      activePrograms: ['HIV Testing & Counseling', 'Antiretroviral Therapy', 'Prevention Education']
+    },
+    {
+      id: 'redstar',
+      name: 'Red STAR Clinic',
+      shortName: 'Red STAR',
+      description: 'Specialized Treatment & Antiretroviral Clinic',
+      patients: 61,
+      activeStaff: 5,
+      monthlyVisits: 89,
+      color: 'bg-destructive',
+      address: 'Pioneer Avenue, Tagum City',
+      phone: '+63 84 655 7890',
+      email: 'redstar@clinic.ph',
+      operatingHours: '9:00 AM - 6:00 PM (Mon-Sat)',
+      testsPerformed: 156,
+      activePrograms: ['Specialized HIV Care', 'Contact Tracing', 'Peer Support Groups']
+    }
+  ];
+
+  const selectedProviderData = providers.find(p => p.id === selectedProvider);
+
+  const handleProviderSelect = (providerId: string) => {
+    setShowProviderDetail(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -101,6 +148,32 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center space-x-4">
+            <div className="flex border border-border rounded-lg p-1">
+              <Button 
+                variant={selectedTab === 'dashboard' ? 'default' : 'ghost'} 
+                size="sm"
+                onClick={() => setSelectedTab('dashboard')}
+              >
+                <BarChart3 className="w-4 h-4 mr-1" />
+                Dashboard
+              </Button>
+              <Button 
+                variant={selectedTab === 'announcements' ? 'default' : 'ghost'} 
+                size="sm"
+                onClick={() => setSelectedTab('announcements')}
+              >
+                <Bell className="w-4 h-4 mr-1" />
+                Announcements
+              </Button>
+              <Button 
+                variant={selectedTab === 'profile' ? 'default' : 'ghost'} 
+                size="sm"
+                onClick={() => setSelectedTab('profile')}
+              >
+                <User className="w-4 h-4 mr-1" />
+                Profile
+              </Button>
+            </div>
             <div className="flex border border-border rounded-lg p-1">
               <Button 
                 variant={selectedView === 'overview' ? 'default' : 'ghost'} 
@@ -134,16 +207,26 @@ const AdminDashboard = () => {
       </header>
 
       <div className="max-w-7xl mx-auto p-6">
-        {/* Provider Selection */}
-        <div className="mb-6">
-          <ProviderSelector 
-            selectedProvider={selectedProvider}
-            onProviderChange={setSelectedProvider}
-          />
-        </div>
+        {selectedTab === 'dashboard' && (
+          <>
+            {/* Provider Selection */}
+            <div className="mb-6">
+              {showProviderDetail && selectedProviderData ? (
+                <ProviderDetailView 
+                  provider={selectedProviderData}
+                  onClose={() => setShowProviderDetail(false)}
+                />
+              ) : (
+                <ProviderSelector 
+                  selectedProvider={selectedProvider}
+                  onProviderChange={setSelectedProvider}
+                  onProviderSelect={handleProviderSelect}
+                />
+              )}
+            </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card className="medical-card">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -215,30 +298,30 @@ const AdminDashboard = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Content based on selected view */}
-        {selectedView === 'overview' && (
-          <>
-            {/* Public Health Statistics */}
-            <div className="mb-8">
-              <PublicHealthStats />
             </div>
 
-            {/* Barangay Statistics */}
-            <div className="mb-8">
-              <BarangayStatistics />
-            </div>
-          </>
-        )}
+            {/* Content based on selected view */}
+            {selectedView === 'overview' && (
+              <>
+                {/* Public Health Statistics */}
+                <div className="mb-8">
+                  <PublicHealthStats />
+                </div>
 
-        {selectedView === 'map' && (
-          <div className="mb-8">
-            <BarangayHeatmap />
-          </div>
-        )}
+                {/* Barangay Statistics */}
+                <div className="mb-8">
+                  <BarangayStatistics />
+                </div>
+              </>
+            )}
 
-        <div className="grid lg:grid-cols-2 gap-6">
+            {selectedView === 'map' && (
+              <div className="mb-8">
+                <BarangayHeatmap />
+              </div>
+            )}
+
+            <div className="grid lg:grid-cols-2 gap-6">
           {/* Pending Appointment Requests */}
           <Card className="medical-card">
             <CardHeader>
@@ -321,10 +404,10 @@ const AdminDashboard = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+            </div>
 
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-3 gap-6 mt-6">
+            {/* Quick Actions */}
+            <div className="grid md:grid-cols-3 gap-6 mt-6">
           <Card className="medical-card hover:shadow-elevated cursor-pointer" onClick={() => navigate('/admin/patients')}>
             <CardContent className="p-6 text-center">
               <Users className="w-8 h-8 text-primary mx-auto mb-4" />
@@ -348,7 +431,24 @@ const AdminDashboard = () => {
               <p className="text-sm text-muted-foreground">Configure system settings</p>
             </CardContent>
           </Card>
-        </div>
+            </div>
+          </>
+        )}
+
+        {selectedTab === 'announcements' && (
+          <div className="mb-6">
+            <AnnouncementManager 
+              userType="admin"
+              canCreateAnnouncements={true}
+            />
+          </div>
+        )}
+
+        {selectedTab === 'profile' && (
+          <div className="mb-6">
+            <ProfileEditor userType="admin" />
+          </div>
+        )}
       </div>
     </div>
   );
