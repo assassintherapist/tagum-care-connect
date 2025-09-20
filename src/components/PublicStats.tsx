@@ -5,15 +5,21 @@ import { TrendingUp, Users, Calendar, MapPin } from "lucide-react";
 
 const mockStats = {
   totalTested: 2847,
+  totalPositive: 91,
   monthlyTests: 156,
+  monthlyPositive: 5,
   positiveRate: 3.2,
   treatmentCoverage: 92.5,
+  activeCases: 78,
   barangayData: [
-    { name: "Apokon", tested: 245, positive: 8 },
-    { name: "Magugpo", tested: 198, positive: 6 },
-    { name: "Mankilam", tested: 167, positive: 4 },
-    { name: "La Filipina", tested: 134, positive: 3 },
-    { name: "Cuambogan", tested: 125, positive: 5 }
+    { name: "Apokon", tested: 245, positive: 8, active: 6 },
+    { name: "Magugpo", tested: 198, positive: 6, active: 5 },
+    { name: "Mankilam", tested: 167, positive: 4, active: 3 },
+    { name: "La Filipina", tested: 134, positive: 3, active: 2 },
+    { name: "Cuambogan", tested: 125, positive: 5, active: 4 },
+    { name: "Pagsabangan", tested: 98, positive: 2, active: 2 },
+    { name: "New Visayas", tested: 87, positive: 3, active: 1 },
+    { name: "Rizal", tested: 76, positive: 1, active: 1 }
   ],
   ageGroups: [
     { name: "15-24", value: 28, color: "#10b981" },
@@ -32,7 +38,7 @@ export const PublicStats = () => {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card className="medical-card">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -49,20 +55,8 @@ export const PublicStats = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">This Month</p>
-                <p className="text-2xl font-bold text-accent">{mockStats.monthlyTests}</p>
-              </div>
-              <Calendar className="w-8 h-8 text-accent" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="medical-card">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Positive Rate</p>
-                <p className="text-2xl font-bold text-secondary">{mockStats.positiveRate}%</p>
+                <p className="text-sm text-muted-foreground">Positive Cases</p>
+                <p className="text-2xl font-bold text-secondary">{mockStats.totalPositive}</p>
               </div>
               <TrendingUp className="w-8 h-8 text-secondary" />
             </div>
@@ -73,10 +67,36 @@ export const PublicStats = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Treatment Coverage</p>
-                <p className="text-2xl font-bold text-primary">{mockStats.treatmentCoverage}%</p>
+                <p className="text-sm text-muted-foreground">Active Cases</p>
+                <p className="text-2xl font-bold text-accent">{mockStats.activeCases}</p>
               </div>
-              <MapPin className="w-8 h-8 text-primary" />
+              <MapPin className="w-8 h-8 text-accent" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="medical-card">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">This Month</p>
+                <p className="text-2xl font-bold text-primary">{mockStats.monthlyTests}</p>
+                <p className="text-xs text-muted-foreground">tests</p>
+              </div>
+              <Calendar className="w-8 h-8 text-primary" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="medical-card">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">New Positive</p>
+                <p className="text-2xl font-bold text-secondary">{mockStats.monthlyPositive}</p>
+                <p className="text-xs text-muted-foreground">this month</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-secondary" />
             </div>
           </CardContent>
         </Card>
@@ -84,20 +104,27 @@ export const PublicStats = () => {
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Barangay Testing Data */}
+        {/* Barangay Data */}
         <Card className="medical-card">
           <CardHeader>
-            <CardTitle className="text-primary">Testing by Barangay</CardTitle>
+            <CardTitle className="text-primary">Cases by Barangay</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={mockStats.barangayData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
+                <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
                 <YAxis />
-                <Tooltip />
-                <Bar dataKey="tested" fill="hsl(var(--primary))" />
-                <Bar dataKey="positive" fill="hsl(var(--accent))" />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    value, 
+                    name === 'tested' ? 'Tested' : 
+                    name === 'positive' ? 'Positive Cases' : 'Active Cases'
+                  ]}
+                />
+                <Bar dataKey="tested" fill="hsl(var(--primary))" name="tested" />
+                <Bar dataKey="positive" fill="hsl(var(--secondary))" name="positive" />
+                <Bar dataKey="active" fill="hsl(var(--accent))" name="active" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

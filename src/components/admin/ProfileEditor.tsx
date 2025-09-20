@@ -33,7 +33,7 @@ interface UserProfile {
 }
 
 interface ProfileEditorProps {
-  userType: 'admin' | 'staff';
+  userType: 'admin' | 'staff' | 'patient';
 }
 
 const ProfileEditor: React.FC<ProfileEditorProps> = ({ userType }) => {

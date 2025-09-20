@@ -15,6 +15,7 @@ export const AnonymousBooking = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [formData, setFormData] = useState({
     codename: "",
+    provider: "",
     service: "",
     timeSlot: "",
     notes: ""
@@ -23,10 +24,10 @@ export const AnonymousBooking = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDate || !formData.codename || !formData.service || !formData.timeSlot) {
+    if (!selectedDate || !formData.codename || !formData.provider || !formData.service || !formData.timeSlot) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields including provider selection.",
         variant: "destructive"
       });
       return;
@@ -50,7 +51,7 @@ export const AnonymousBooking = () => {
     });
 
     // Reset form
-    setFormData({ codename: "", service: "", timeSlot: "", notes: "" });
+    setFormData({ codename: "", provider: "", service: "", timeSlot: "", notes: "" });
     setSelectedDate(undefined);
   };
 
@@ -73,6 +74,19 @@ export const AnonymousBooking = () => {
               onChange={(e) => setFormData(prev => ({ ...prev, codename: e.target.value }))}
               className="mt-1"
             />
+          </div>
+
+          <div>
+            <Label htmlFor="provider">Healthcare Provider *</Label>
+            <Select onValueChange={(value) => setFormData(prev => ({ ...prev, provider: value }))}>
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select healthcare provider" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cho">CHO (City Health Office)</SelectItem>
+                <SelectItem value="red-star">Red STAR Clinic</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
