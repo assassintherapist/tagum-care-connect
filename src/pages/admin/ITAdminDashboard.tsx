@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { mockAppointments, mockPatients, mockBarangayData } from '@/data/mockData';
+import FacilityManager from '@/components/admin/FacilityManager';
+import SystemSettings from '@/components/admin/SystemSettings';
 
 const ITAdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -222,57 +224,7 @@ const ITAdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="facilities" className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="medical-card">
-                <CardHeader>
-                  <CardTitle>CHO (City Health Office)</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-foreground">Patient Management</h4>
-                    <div className="space-y-1">
-                      {mockPatients.filter(p => p.registeredAt === 'CHO').map(patient => (
-                        <div key={patient.id} className="flex justify-between items-center p-2 bg-gradient-subtle rounded">
-                          <span className="text-foreground">{patient.codename}</span>
-                          <Badge className={
-                            patient.status === 'Active' ? 'bg-success text-success-foreground' :
-                            patient.status === 'Lost to Follow-up' ? 'bg-warning text-warning-foreground' :
-                            'bg-muted text-muted-foreground'
-                          }>
-                            {patient.status}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="medical-card">
-                <CardHeader>
-                  <CardTitle>Red STAR Clinic</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-foreground">Patient Management</h4>
-                    <div className="space-y-1">
-                      {mockPatients.filter(p => p.registeredAt === 'Red STAR Clinic').map(patient => (
-                        <div key={patient.id} className="flex justify-between items-center p-2 bg-gradient-subtle rounded">
-                          <span className="text-foreground">{patient.codename}</span>
-                          <Badge className={
-                            patient.status === 'Active' ? 'bg-success text-success-foreground' :
-                            patient.status === 'Lost to Follow-up' ? 'bg-warning text-warning-foreground' :
-                            'bg-muted text-muted-foreground'
-                          }>
-                            {patient.status}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <FacilityManager />
           </TabsContent>
 
           <TabsContent value="reports" className="space-y-6">
@@ -311,36 +263,7 @@ const ITAdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
-            <Card className="medical-card">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Settings className="w-5 h-5 text-primary" />
-                  <span>System Configuration</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="p-4 bg-gradient-subtle rounded-lg">
-                    <h3 className="font-semibold text-foreground mb-2">User Management</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Manage user accounts, roles, and permissions across both facilities.
-                    </p>
-                  </div>
-                  <div className="p-4 bg-gradient-subtle rounded-lg">
-                    <h3 className="font-semibold text-foreground mb-2">Data Backup & Security</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Configure automated backups and security settings for patient data protection.
-                    </p>
-                  </div>
-                  <div className="p-4 bg-gradient-subtle rounded-lg">
-                    <h3 className="font-semibold text-foreground mb-2">System Monitoring</h3>
-                    <p className="text-muted-foreground text-sm">
-                      Monitor system performance, user activity, and data integrity across facilities.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <SystemSettings />
           </TabsContent>
         </Tabs>
       </main>
