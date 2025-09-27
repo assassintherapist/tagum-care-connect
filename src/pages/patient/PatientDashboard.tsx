@@ -21,6 +21,7 @@ import {
   BookOpen
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { PatientAnnouncements } from "@/components/patient/PatientAnnouncements";
 import { HIVInformation } from "@/components/patient/HIVInformation";
 import { CommunityChat } from "@/components/patient/CommunityChat";
@@ -29,6 +30,7 @@ import ProfileEditor from "@/components/admin/ProfileEditor";
 const PatientDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
 
   // Mock data - in real app this would come from Supabase
@@ -71,6 +73,7 @@ const PatientDashboard = () => {
   ];
 
   const handleLogout = () => {
+    logout();
     toast({
       title: "Logged out successfully",
       description: "Thank you for using our service"
@@ -89,7 +92,7 @@ const PatientDashboard = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">My Health Dashboard</h1>
-              <p className="text-sm text-muted-foreground">Welcome back, Maria</p>
+              <p className="text-sm text-muted-foreground">Welcome back, {user?.name || 'Patient'}</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">

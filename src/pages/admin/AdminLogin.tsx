@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate, Link } from "react-router-dom";
 import { Shield, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,17 +16,23 @@ const AdminLogin = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // For demo purposes - in real app, this would connect to Supabase
-    if (formData.email && formData.password) {
+    const success = await login(formData.email, formData.password);
+    if (success) {
       toast({
         title: "Admin Login Successful",
         description: "Welcome to the healthcare management system",
       });
-      navigate('/admin/dashboard');
+      // Navigate based on role
+      if (formData.email === 'it.admin@tagumcity.gov.ph') {
+        navigate('/it-admin/dashboard');
+      } else {
+        navigate('/healthcare-provider/dashboard');
+      }
     } else {
       toast({
         title: "Login Failed",

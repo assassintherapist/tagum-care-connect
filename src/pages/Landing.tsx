@@ -32,10 +32,35 @@ const Landing = () => {
             Comprehensive HIV Care &
             <span className="bg-gradient-primary bg-clip-text text-transparent"> Case Management</span>
           </h2>
-          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             A secure, digital platform connecting patients with healthcare providers 
             for seamless HIV care management in Tagum City.
           </p>
+
+          {/* Demo Credentials Card */}
+          <Card className="medical-card mb-12 max-w-2xl mx-auto">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Demo Credentials</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-sm">
+                <div className="text-center p-3 bg-gradient-subtle rounded-lg">
+                  <p className="font-medium text-foreground mb-1">Patient</p>
+                  <p className="text-muted-foreground">patient@test.com</p>
+                  <p className="text-muted-foreground">password: demo</p>
+                </div>
+                <div className="text-center p-3 bg-gradient-subtle rounded-lg">
+                  <p className="font-medium text-foreground mb-1">Healthcare Provider</p>
+                  <p className="text-muted-foreground">cho.admin@tagumcity.gov.ph</p>
+                  <p className="text-muted-foreground">redstar.admin@tagumcity.gov.ph</p>
+                  <p className="text-muted-foreground">password: demo</p>
+                </div>
+                <div className="text-center p-3 bg-gradient-subtle rounded-lg">
+                  <p className="font-medium text-foreground mb-1">IT Admin</p>
+                  <p className="text-muted-foreground">it.admin@tagumcity.gov.ph</p>
+                  <p className="text-muted-foreground">password: demo</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Role Selection Cards */}
           <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate, Link } from "react-router-dom";
 import { Heart, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PatientLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,12 +16,13 @@ const PatientLogin = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // For demo purposes - in real app, this would connect to Supabase
-    if (formData.email && formData.password) {
+    const success = await login(formData.email, formData.password);
+    if (success) {
       toast({
         title: "Login Successful",
         description: "Welcome to your health dashboard",
